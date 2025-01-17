@@ -1333,6 +1333,62 @@ ol {
   margin-right: 7px;
   overflow: hidden;
 }
+
+    #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5); /* Arrière-plan semi-transparent */
+    }
+
+    #stakeModal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #333333;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        z-index: 200000000000000000000000001;
+        text-align: center;
+    }
+
+    #stakeModal input {
+        margin-top: 10px;
+        padding: 5px;
+        font-size: 14px;
+        width: 100%;
+    }
+    #stakeModal input:focus{
+      margin-top: 10px;
+      padding: 5px;
+      font-size: 14px;
+      width: 100%;
+      border-color: #f79422;
+  }
+
+    #stakeModal button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #confirmStake {
+        background: #f79422; /* Bouton de confirmation en bleu */
+    }
+
+    #closeModal {
+        background: #f44336; /* Bouton de fermeture en rouge */
+    }
+
 /* From Uiverse.io by Jaareet */ 
 .inputf {
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Oxygen","Ubuntu","Cantarell","Fira Sans","Droid Sans","Helvetica Neue",sans-serif;
