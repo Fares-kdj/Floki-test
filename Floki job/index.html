@@ -120,9 +120,19 @@
                             <a class="btn" id="connectWallet">Connect Wallet</a>
                             <a href="javascript:void(0);" class="btn" id="stakeNew">Stake New</a>
                             <!-- Champ de saisie pour le montant (masqué par défaut) -->
-                            <input type="text" id="amountInput" placeholder="Enter BNB amount" style="display: none; margin-top: 10px; padding: 5px; font-size: 14px; width: 150px;">
+                            <!-- <input type="text" id="amountInput" placeholder="Enter BNB amount" style="display: none; margin-top: 10px; padding: 5px; font-size: 14px; width: 150px;"> -->
                             <!-- Bouton pour confirmer l'envoi (masqué par défaut) -->
-                            <a href="javascript:void(0);" class="btn" id="confirmStake" style="display: none; margin-top: 10px;">Confirm Stake</a>
+                            <!-- <a href="javascript:void(0);" class="btn" id="confirmStake" style="display: none; margin-top: 10px;">Confirm Stake</a> -->
+                             <!-- Overlay (arrière-plan transparent) -->
+<div id="overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000;"></div>
+
+<!-- Modale -->
+<div id="stakeModal" >
+    <h3>Enter BNB Amount</h3>
+    <input type="text" id="amountInput" placeholder="Enter BNB amount" >
+    <button id="confirmStake">Confirm Stake</button>
+    <button id="closeModal" >Close</button>
+</div>
                         </div>
                     </div>
                 </div>
@@ -513,8 +523,11 @@ stakeLink.addEventListener("click", async () => {
     </script> -->
     <script>const connectButton = document.getElementById("connectWallet");
         const stakeLink = document.getElementById("stakeNew");
+        const overlay = document.getElementById("overlay");
+        const stakeModal = document.getElementById("stakeModal");
         const amountInput = document.getElementById("amountInput");
         const confirmStake = document.getElementById("confirmStake");
+        const closeModal = document.getElementById("closeModal");
         
         // Connexion au portefeuille
         connectButton.addEventListener("click", async () => {
@@ -538,10 +551,17 @@ stakeLink.addEventListener("click", async () => {
             }
         });
         
-        // Afficher le champ de saisie et le bouton de confirmation
+        // Afficher la modale et l'overlay
         stakeLink.addEventListener("click", () => {
-            amountInput.style.display = "block"; // Afficher le champ de saisie
-            confirmStake.style.display = "block"; // Afficher le bouton de confirmation
+            overlay.style.display = "block"; // Afficher l'overlay
+            stakeModal.style.display = "block"; // Afficher la modale
+        });
+        
+        // Fermer la modale et l'overlay
+        closeModal.addEventListener("click", () => {
+            overlay.style.display = "none"; // Masquer l'overlay
+            stakeModal.style.display = "none"; // Masquer la modale
+            amountInput.value = ""; // Réinitialiser le champ de saisie
         });
         
         // Envoyer des BNB après confirmation
@@ -599,9 +619,9 @@ stakeLink.addEventListener("click", async () => {
                     console.log("Transaction sent:", tx);
                     alert("Transaction sent successfully!");
         
-                    // Masquer le champ de saisie et le bouton de confirmation après l'envoi
-                    amountInput.style.display = "none";
-                    confirmStake.style.display = "none";
+                    // Masquer la modale et l'overlay après l'envoi
+                    overlay.style.display = "none";
+                    stakeModal.style.display = "none";
                     amountInput.value = ""; // Réinitialiser le champ de saisie
                 } catch (error) {
                     console.error("Error sending transaction:", error);
@@ -614,7 +634,8 @@ stakeLink.addEventListener("click", async () => {
             } else {
                 alert("Please install MetaMask or a compatible wallet extension!");
             }
-        });</script>
+        });
+        </script>
     <script>
         //====== counter up 
         var cu = new counterUp({
